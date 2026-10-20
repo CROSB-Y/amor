@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuestra Historia en Fotos 💕</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #2b0918;
+            --container-bg: rgba(74, 19, 43, 0.85);
+            --polaroid-bg: #fff;
+            --text-color: #fce4ec;
+            --accent-color: #ff4081;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1f0410, #4a132b, #2b0918);
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        /* Corazones flotantes de fondo */
+        .hearts-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            color: rgba(255, 64, 129, 0.2);
+            font-size: 20px;
+            animation: floatUp 8s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            z-index: 2;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            color: #ff80ab;
+            text-shadow: 0 0 15px rgba(255, 64, 129, 0.5);
+            margin-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            font-size: 1.1rem;
+            color: #f8bbd0;
+            font-weight: 300;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+            z-index: 2;
+        }
+
+        /* Fila de foto y frase al lado */
+        .story-row {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            background: var(--container-bg);
+            padding: 1.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 128, 171, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .story-row:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(255, 64, 129, 0.3);
+        }
+
+        .story-row:nth-child(even) {
+            flex-direction: row-reverse;
+            text-align: right;
+        }
+
+        .story-row:nth-child(even) .phrase-box {
+            text-align: right;
+        }
+
+        /* Estilo Polaroid */
+        .polaroid {
+            background: var(--polaroid-bg);
+            padding: 12px 12px 35px 12px;
+            border-radius: 4px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            width: 220px;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .polaroid:hover {
+            transform: scale(1.05) rotate(1deg);
+        }
+
+        .polaroid img {
+            width: 196px;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 2px;
+        }
+
+        .polaroid .caption {
+            font-family: 'Dancing Script', cursive;
+            color: #333;
+            font-size: 1.2rem;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        /* Caja de frase romántica */
+        .phrase-box {
+            flex-grow: 1;
+            padding: 0 1rem;
+        }
+
+        .phrase-box h3 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.2rem;
+            color: #ff80ab;
+            margin-bottom: 0.5rem;
+        }
+
+        .phrase-box p {
+            font-size: 1.05rem;
+            color: #fce4ec;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        /* Modal para ampliar foto */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 10;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .modal img {
+            max-width: 90%;
+            max-height: 80vh;
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(255, 64, 129, 0.5);
+            border: 5px solid white;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2.5rem;
+            cursor: pointer;
+        }
+
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #f8bbd0;
+            z-index: 2;
+        }
+
+        /* Adaptabilidad para móviles */
+        @media (max-width: 768px) {
+            .story-row, .story-row:nth-child(even) {
+                flex-direction: column;
+                text-align: center;
+            }
+            .story-row:nth-child(even) .phrase-box {
+                text-align: center;
+            }
+            .phrase-box {
+                padding: 0;
+            }
+            h1 {
+                font-size: 2.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fondo con corazones animados -->
+    <div class="hearts-bg" id="heartsBg"></div>
+
+    <header>
+        <h1>Nuestra Historia en Fotos</h1>
+        <p class="subtitle">Cada momento a tu lado es mi capítulo favorito 💕</p>
+    </header>
+
+    <div class="container">
+        <!-- Fila 1 -->
+        <div class="story-row">
+            <div class="polaroid" onclick="openModal(this.querySelector('img').src)">
+                <img src="29.jpg" alt="Foto especial">
+                <div class="caption">Nuestra Historia</div>
+            </div>
+            <div class="phrase-box">
+                <h3>Eres mi coincidencia más hermosa</h3>
+                <p>Desde el primer instante en que cruzamos caminos, supe que mi vida se había llenado de una luz completamente nueva y maravillosa.</p>
+            </div>
+        </div>
+
+        <!-- Fila 2 -->
+        <div class="story-row">
+            <div class="polaroid" onclick="openModal(this.querySelector('img').src)">
+                <img src="28.jpeg" alt="Foto especial">
+                <div class="caption">Amor Eterno</div>
+            </div>
+            <div class="phrase-box">
+                <h3>Tu sonrisa ilumina mis días</h3>
+                <p>No importa cuán nublado o difícil sea el día, basta con ver tu sonrisa para que todo cobre sentido y vuelva a brillar.</p>
+            </div>
+        </div>
+
+        <!-- Fila 3 -->
+        <div class="story-row">
+            <div class="polaroid" onclick="openModal(this.querySelector('img').src)">
+                <img src="27.jpeg" alt="Foto especial">
+                <div class="caption">Momentos Juntos</div>
+            </div>
+            <div class="phrase-box">
+                <h3>Contigo todo es perfecto</h3>
+                <p>Cada segundo compartido a tu lado se convierte en un recuerdo inolvidable grabado a fuego en mi corazón.</p>
+            </div>
+        </div>
+
+        <!-- Fila 4 -->
+        <div class="story-row">
+            <div class="polaroid" onclick="openModal(this.querySelector('img').src)">
+                <img src="WhatsApp Image 2026-10-18 at 10.48.40 PM.jpeg" alt="Foto especial">
+                <div class="caption">Alegría Pura</div>
+            </div>
+            <div class="phrase-box">
+                <h3>Mi refugio favorito</h3>
+                <p>Tus brazos son el único lugar en el mundo donde encuentro paz absoluta y siento que estoy exactamente en casa.</p>
+            </div>
+        </div>
+
+        <!-- Fila 5 -->
+        <div class="story-row">
+            <div class="polaroid" onclick="openModal(this.querySelector('img').src)">
+                <img src="21.jpeg" alt="Foto especial">
+                <div class="caption">Conexión Única</div>
+            </div>
+            <div class="phrase-box">
+                <h3>Amas cada detalle</h3>
+                <p>Incluso en la distancia o en una simple llamada, tu presencia logra acelerar mis latidos y alegrar por completo mi alma.</p>
+            </div>
+        </div>
+
+        <!-- Fila 6 -->
+        <div class="story-row">
+            <div class="polaroid" onclick="openModal(this.querySelector('img').src)">
+                <img src="19.jpeg" alt="Foto especial">
+                <div class="caption">Mirada tierna</div>
+            </div>
+            <div class="phrase-box">
+                <h3>Tu mirada lo dice todo</h3>
+                <p>Tus ojos tienen el superpoder de detener el tiempo y hacerme suspirar con tan solo una mirada cómplice.</p>
+            </div>
+        </div>
+
+        <!-- Fila 7 -->
+        <div class="story-row">
+            <div class="polaroid" onclick="openModal(this.querySelector('img').src)">
+                <img src="17.jpeg" alt="Foto especial">
+                <div class="caption">Complicidad</div>
+            </div>
+            <div class="phrase-box">
+                <h3>Mi cómplice de vida</h3>
+                <p>Pasan los días y sigo maravillándome de cómo conectamos tan bonito. Gracias por ser mi alegría constante.</p>
+            </div>
+        </div>
+
+        <!-- Fila 8 -->
+        <div class="story-row">
+            <div class="polaroid" onclick="openModal(this.querySelector('img').src)">
+                <img src="14.jpeg" alt="Foto especial">
+                <div class="caption">Tiernos Momentos</div>
+            </div>
+            <div class="phrase-box">
+                <h3>Dueña de mis pensamientos</h3>
+                <p>Te has vuelto el pensamiento más bonito al despertar y el último suspiro antes de cerrar los ojos por la noche.</p>
+            </div>
+        </div>
+
+        <!-- Fila 9 -->
+        <div class="story-row">
+            <div class="polaroid" onclick="openModal(this.querySelector('img').src)">
+                <img src="12.jpeg" alt="Foto especial">
+                <div class="caption">Ternura</div>
+            </div>
+            <div class="phrase-box">
+                <h3>Un amor sincero</h3>
+                <p>Valoro cada risa, cada charla y cada detalle que compartimos. Eres un regalo extraordinario en mi vida.</p>
+            </div>
+        </div>
+
+        <!-- Fila 10 -->
+        <div class="story-row">
+            <div class="polaroid" onclick="openModal(this.querySelector('img').src)">
+                <img src="9.jpeg" alt="Foto especial">
+                <div class="caption">Besito virtual</div>
+            </div>
+            <div class="phrase-box">
+                <h3>Para siempre juntos</h3>
+                <p>No importa lo que el mañana nos depare, sé que mientras estemos tomados de la mano podremos superar cualquier cosa.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Hecho con mucho amor para ti ❤️</p>
+    </footer>
+
+    <!-- Ventana Modal -->
+    <div class="modal" id="imageModal" onclick="closeModal()">
+        <span class="modal-close">&times;</span>
+        <img id="modalImg" src="" alt="Ampliada">
+    </div>
+
+    <script>
+        /* Generar corazones flotantes dinámicos */
+        const heartsContainer = document.getElementById('heartsBg');
+        const heartSymbols = ['❤️', '💖', '✨', '💗', '💕'];
+        
+        for (let i = 0; i < 25; i++) {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            heart.style.animationDelay = (Math.random() * 5) + 's';
+            heart.innerText = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+            heartsContainer.appendChild(heart);
+        }
+
+        /* Funciones del
